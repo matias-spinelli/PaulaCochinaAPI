@@ -17,7 +17,7 @@ FROM amazonlinux:2
 RUN yum -y install libatomic sqlite
 
 # Copiar el binario desde la etapa de build
-COPY --from=build /app/.build/release/Run /run
+COPY --from=build /app/.build/release/RecetasAPI /run
 
 # Puerto que usará Render
 ENV PORT=8080
