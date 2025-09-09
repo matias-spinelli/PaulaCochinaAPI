@@ -1,29 +1,29 @@
-# Imagen oficial de Swift
-FROM swift:6.0-amazonlinux2 as build
+# Etapa de build
+FROM swift:5.9 as build
 
-# Crear carpeta de trabajo
 WORKDIR /app
 
-# Copiar los archivos de tu proyecto
+# Copiar dependencias primero (cacheo)
+COPY Package.* ./
+RUN swift package resolve
+
+# Copiar código
 COPY . .
 
 # Compilar en release
-RUN swift build -c release
+RUN swift build -c release --static-swift-stdlib
 
-# Imagen más liviana para correr
+# Etapa de runtime
 FROM amazonlinux:2
 
-# Instalar dependencias necesarias
-RUN yum -y install libatomic sqlite
+RUN yum -y install libatomic sqlite tar gzip && yum clean all
 
-# Copiar el binario desde la etapa de build
-COPY --from=build /app/.build/release/RecetasAPI /run
+WORKDIR /app
 
-# Puerto que usará Render
-ENV PORT=8080
+# Copiar el binario
+COPY --from=build /app/.build/release/RecetasAPI /app/RecetasAPI
+RUN chmod +x /app/RecetasAPI
 
-# Exponer el puerto
 EXPOSE 8080
 
-# Ejecutar la app
-CMD ["/run"]
+CMD ["/app/RecetasAPI"]
