@@ -1,6 +1,6 @@
 import Vapor
 import Fluent
-import FluentSQLiteDriver
+import FluentMongoDriver
 
 public func configure(_ app: Application) throws {
     
@@ -8,13 +8,17 @@ public func configure(_ app: Application) throws {
     if let portEnv = Environment.get("PORT"), let port = Int(portEnv) {
         app.http.server.configuration.port = port
     }
-    
-    // DB SQLite (archivo local db.sqlite)
-    app.databases.use(.sqlite(.file("db.sqlite")), as: .sqlite)
 
-    // Migraciones
+    // 🚀 Configurar conexión a MongoDB
+    guard let mongoURL = Environment.get("MONGO_URL") else {
+        fatalError("❌ Faltó configurar MONGO_URL en las variables de entorno")
+    }
+
+    try app.databases.use(.mongo(connectionString: mongoURL), as: .mongo)
+
+    // Migraciones (si vas a usar)
     app.migrations.add(CreateRecipe())
-    
+
     // Rutas
     try routes(app)
 
