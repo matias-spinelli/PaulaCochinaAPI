@@ -1,36 +1,73 @@
 import Vapor
-import Fluent
+import MongoKitten
 
 struct RecipeController {
-    func index(req: Request) throws -> EventLoopFuture<[Recipe]> {
-        Recipe.query(on: req.db).all()
+    /// GET /api/recipes
+    func index(req: Request) async throws -> [Recipe] {
+        let collection = mongoDB["recipes"]
+        return try await collection.find().decode(Recipe.self).drain()
     }
 
-    func create(req: Request) throws -> EventLoopFuture<Recipe> {
-        let recipe = try req.content.decode(Recipe.self)
-        return recipe.save(on: req.db).map { recipe }
+    /// POST /api/recipes
+    func create(req: Request) async throws -> Recipe {
+        var recipe = try req.content.decode(Recipe.self)
+
+        // Si no tiene _id, generamos uno aquí para poder devolver el objeto completo
+        if recipe._id == nil {
+            recipe._id = ObjectId()
+        }
+
+        let collection = mongoDB["recipes"]
+        try await collection.insertEncoded(recipe) // usa Codable directamente
+        return recipe
     }
 
-    func show(req: Request) throws -> EventLoopFuture<Recipe> {
-        Recipe.find(req.parameters.get("id"), on: req.db)
-            .unwrap(or: Abort(.notFound))
+    /// GET /api/recipes/:id
+    func show(req: Request) async throws -> Recipe {
+        guard let idString = req.parameters.get("id") else {
+            throw Abort(.badRequest, reason: "Missing id")
+        }
+        guard let oid = ObjectId(idString) else {
+            throw Abort(.badRequest, reason: "Invalid id")
+        }
+
+        let collection = mongoDB["recipes"]
+        guard let doc = try await collection.findOne("_id" == oid) else {
+            throw Abort(.notFound)
+        }
+        return try BSONDecoder().decode(Recipe.self, from: doc)
     }
 
-    func update(req: Request) throws -> EventLoopFuture<Recipe> {
-        let input = try req.content.decode(Recipe.self)
-        return Recipe.find(req.parameters.get("id"), on: req.db)
-            .unwrap(or: Abort(.notFound)).flatMap { recipe in
-                recipe.title = input.title
-                recipe.description = input.description
-                recipe.isFavorite = input.isFavorite
-                return recipe.save(on: req.db).map { recipe }
-            }
+    /// PUT /api/recipes/:id
+    func update(req: Request) async throws -> Recipe {
+        guard let idString = req.parameters.get("id") else {
+            throw Abort(.badRequest, reason: "Missing id")
+        }
+        guard let oid = ObjectId(idString) else {
+            throw Abort(.badRequest, reason: "Invalid id")
+        }
+
+        var updated = try req.content.decode(Recipe.self)
+        updated._id = oid // garantizamos que el _id sea el del path
+
+        let collection = mongoDB["recipes"]
+        // updateEncoded hace el encode por vos y reemplaza el documento
+        try await collection.updateEncoded(where: "_id" == oid, to: updated)
+
+        return updated
     }
 
-    func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        Recipe.find(req.parameters.get("id"), on: req.db)
-            .unwrap(or: Abort(.notFound))
-            .flatMap { $0.delete(on: req.db) }
-            .transform(to: .noContent)
+    /// DELETE /api/recipes/:id
+    func delete(req: Request) async throws -> HTTPStatus {
+        guard let idString = req.parameters.get("id") else {
+            throw Abort(.badRequest, reason: "Missing id")
+        }
+        guard let oid = ObjectId(idString) else {
+            throw Abort(.badRequest, reason: "Invalid id")
+        }
+
+        let collection = mongoDB["recipes"]
+        try await collection.deleteOne(where: "_id" == oid)
+        return .noContent
     }
 }
