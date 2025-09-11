@@ -6,6 +6,10 @@ services:
     container_name: recetasapi
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     environment:
       PORT: 8080
+      MONGO_URL: ${MONGO_URL}
+
 
