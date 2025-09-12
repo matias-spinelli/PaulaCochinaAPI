@@ -1,5 +1,6 @@
 import Vapor
 import MongoKitten
+import JWT
 
 var mongoDB: MongoDatabase!
 
@@ -22,6 +23,9 @@ public func configure(_ app: Application) throws {
             app.logger.error("❌ Error conectando a MongoDB: \(error)")
         }
     }
+
+    // 🔑 Configurar JWT signer
+    app.jwt.signers.use(.hs256(key: Environment.get("JWT_SECRET") ?? "super-secret-key"))
 
     // Rutas
     try routes(app)
