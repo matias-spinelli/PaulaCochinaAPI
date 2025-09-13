@@ -9,7 +9,8 @@ services:
     env_file:
       - .env
     environment:
-      PORT: 8080
+      PORT: ${PORT}
       MONGO_URL: ${MONGO_URL}
+      JWT_SECRET: ${JWT_SECRET}
 
 

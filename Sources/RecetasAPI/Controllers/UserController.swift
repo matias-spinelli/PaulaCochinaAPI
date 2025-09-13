@@ -17,13 +17,16 @@ struct UserController {
 
         // Chequeo si ya existe
         if try await collection.findOne("email" == signupRequest.email) != nil {
-            let error = [
-                "errors": [[
-                    "msg": "The email \(signupRequest.email) is already registered",
-                    "param": "email",
-                    "location": "body"
-                ]]
-            ]
+            let error = ErrorResponse(.userExists)
+            return try Response(
+                status: .badRequest,
+                body: .init(data: JSONEncoder().encode(error))
+            )
+        }
+
+        // Validación simple de password
+        guard signupRequest.password.count >= 6 else {
+            let error = ErrorResponse(.passwordTooShort)
             return try Response(
                 status: .badRequest,
                 body: .init(data: JSONEncoder().encode(error))
@@ -49,13 +52,21 @@ struct UserController {
         let collection = mongoDB["users"]
 
         guard let userDoc = try await collection.findOne("email" == loginRequest.email) else {
-            throw Abort(.unauthorized, reason: "Invalid email or password")
+            let error = ErrorResponse(.userNotFound)
+            return try Response(
+                status: .unauthorized,
+                body: .init(data: JSONEncoder().encode(error))
+            )
         }
 
         let user = try BSONDecoder().decode(User.self, from: userDoc)
 
         guard user.password == loginRequest.password else {
-            throw Abort(.unauthorized, reason: "Invalid email or password")
+            let error = ErrorResponse(.wrongPassword)
+            return try Response(
+                status: .unauthorized,
+                body: .init(data: JSONEncoder().encode(error))
+            )
         }
 
         // Generamos y devolvemos token response
@@ -64,10 +75,13 @@ struct UserController {
 
     // MARK: - Helper
     private func makeTokenResponse(for user: User, req: Request) throws -> Response {
+        // Expira en 1 hora
+        let expiration = ExpirationClaim(value: Date().addingTimeInterval(3600))
+
         let payload = AuthPayload(
             uid: user._id.hexString,
             email: user.email,
-            exp: .init(value: .distantFuture)
+            exp: expiration
         )
 
         let token = try req.jwt.sign(payload)

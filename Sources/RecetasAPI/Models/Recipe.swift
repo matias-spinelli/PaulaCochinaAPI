@@ -1,11 +1,12 @@
+//
+//  Recipe.swift
+//  RecetasAPI
+//
+//  Created by Matías Spinelli on 29/08/2025.
+//
+
 import Vapor
 import MongoKitten
-
-struct Ingredient: Codable, Content {
-    var _id: ObjectId?
-    var amount: String
-    var name: String
-}
 
 struct Recipe: Codable, Content {
     var _id: ObjectId?
@@ -13,6 +14,5 @@ struct Recipe: Codable, Content {
     var description: String
     var ingredients: [Ingredient]
     var imagePath: String
-    var userEmail: String
     var __v: Int?
 }

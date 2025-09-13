@@ -1,73 +1,95 @@
+//
+//  RecipeController.swift
+//  RecetasAPI
+//
+//  Created by Matías Spinelli on 11/09/2025.
+//
+
 import Vapor
 import MongoKitten
 
 struct RecipeController {
-    /// GET /api/recipes
-    func index(req: Request) async throws -> [Recipe] {
-        let collection = mongoDB["recipes"]
-        return try await collection.find().decode(Recipe.self).drain()
+    // MARK: - Helpers
+    
+    private func getCollection() -> MongoCollection {
+        return mongoDB["recipes"]
     }
-
-    /// POST /api/recipes
-    func create(req: Request) async throws -> Recipe {
-        var recipe = try req.content.decode(Recipe.self)
-
-        // Si no tiene _id, generamos uno aquí para poder devolver el objeto completo
-        if recipe._id == nil {
-            recipe._id = ObjectId()
-        }
-
-        let collection = mongoDB["recipes"]
-        try await collection.insertEncoded(recipe) // usa Codable directamente
-        return recipe
-    }
-
-    /// GET /api/recipes/:id
-    func show(req: Request) async throws -> Recipe {
+    
+    private func getObjectId(from req: Request) throws -> ObjectId {
         guard let idString = req.parameters.get("id") else {
-            throw Abort(.badRequest, reason: "Missing id")
+            throw Abort(.badRequest, reason: RecipeError.missingId.rawValue)
         }
         guard let oid = ObjectId(idString) else {
-            throw Abort(.badRequest, reason: "Invalid id")
+            throw Abort(.badRequest, reason: RecipeError.invalidId.rawValue)
         }
-
-        let collection = mongoDB["recipes"]
-        guard let doc = try await collection.findOne("_id" == oid) else {
-            throw Abort(.notFound)
+        return oid
+    }
+    
+    private func makeErrorResponse(_ status: HTTPResponseStatus, _ error: String) -> Response {
+        let payload = ErrorResponse(error)
+        let data = try! JSONEncoder().encode(payload)
+        return Response(status: status, body: .init(data: data))
+    }
+    
+    // MARK: - Endpoints
+    
+    func index(req: Request) async throws -> Response {
+        do {
+            let recipes = try await getCollection()
+                .find()
+                .decode(Recipe.self)
+                .drain()
+            return try Response(status: .ok, body: .init(data: JSONEncoder().encode(recipes)))
+        } catch {
+            return makeErrorResponse(.internalServerError, "Error obteniendo recetas")
         }
-        return try BSONDecoder().decode(Recipe.self, from: doc)
     }
 
-    /// PUT /api/recipes/:id
-    func update(req: Request) async throws -> Recipe {
-        guard let idString = req.parameters.get("id") else {
-            throw Abort(.badRequest, reason: "Missing id")
+    func create(req: Request) async throws -> Response {
+        do {
+            var recipe = try req.content.decode(Recipe.self)
+            if recipe._id == nil { recipe._id = ObjectId() }
+            try await getCollection().insertEncoded(recipe)
+            return try Response(status: .created, body: .init(data: JSONEncoder().encode(recipe)))
+        } catch {
+            return makeErrorResponse(.badRequest, RecipeError.insertFailed.rawValue)
         }
-        guard let oid = ObjectId(idString) else {
-            throw Abort(.badRequest, reason: "Invalid id")
-        }
-
-        var updated = try req.content.decode(Recipe.self)
-        updated._id = oid // garantizamos que el _id sea el del path
-
-        let collection = mongoDB["recipes"]
-        // updateEncoded hace el encode por vos y reemplaza el documento
-        try await collection.updateEncoded(where: "_id" == oid, to: updated)
-
-        return updated
     }
 
-    /// DELETE /api/recipes/:id
-    func delete(req: Request) async throws -> HTTPStatus {
-        guard let idString = req.parameters.get("id") else {
-            throw Abort(.badRequest, reason: "Missing id")
+    func show(req: Request) async throws -> Response {
+        do {
+            let oid = try getObjectId(from: req)
+            guard let doc = try await getCollection().findOne("_id" == oid) else {
+                return makeErrorResponse(.notFound, RecipeError.notFound.rawValue)
+            }
+            let recipe = try BSONDecoder().decode(Recipe.self, from: doc)
+            return try Response(status: .ok, body: .init(data: JSONEncoder().encode(recipe)))
+        } catch let abort as AbortError {
+            return makeErrorResponse(abort.status, abort.reason)
+        } catch {
+            return makeErrorResponse(.internalServerError, "Error mostrando receta")
         }
-        guard let oid = ObjectId(idString) else {
-            throw Abort(.badRequest, reason: "Invalid id")
-        }
+    }
 
-        let collection = mongoDB["recipes"]
-        try await collection.deleteOne(where: "_id" == oid)
-        return .noContent
+    func update(req: Request) async throws -> Response {
+        do {
+            let oid = try getObjectId(from: req)
+            var updated = try req.content.decode(Recipe.self)
+            updated._id = oid
+            try await getCollection().updateEncoded(where: "_id" == oid, to: updated)
+            return try Response(status: .ok, body: .init(data: JSONEncoder().encode(updated)))
+        } catch {
+            return makeErrorResponse(.badRequest, RecipeError.updateFailed.rawValue)
+        }
+    }
+
+    func delete(req: Request) async throws -> Response {
+        do {
+            let oid = try getObjectId(from: req)
+            try await getCollection().deleteOne(where: "_id" == oid)
+            return Response(status: .noContent)
+        } catch {
+            return makeErrorResponse(.badRequest, RecipeError.deleteFailed.rawValue)
+        }
     }
 }
