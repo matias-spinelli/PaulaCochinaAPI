@@ -39,14 +39,14 @@ El proyecto forma parte del trabajo práctico final de un curso, complementando 
 ## 📂 Estructura del proyecto
 
 Sources/
-├── App/
-│ ├── Controllers/ # Controladores de rutas (RecipesController, AuthController, etc.)
-│ ├── Middleware/ # Middlewares personalizados (LoggingMiddleware, etc.)
-│ ├── Models/ # Modelos de datos (Recipe, User)
-│ ├── configure.swift # Configuración inicial (MongoDB, JWT, CORS)
-│ └── routes.swift # Definición de rutas
+├── RecetasAPI/
+│ ├── Controllers/          # Controladores de rutas (RecipesController, AuthController, etc.)
+│ ├── Middleware/           # Middlewares personalizados (LoggingMiddleware, etc.)
+│ ├── Models/               # Modelos de datos (Recipe, User)
+│ ├── configure.swift       # Configuración inicial (MongoDB, JWT, CORS)
+│ └── routes.swift          # Definición de rutas
 └── Run/
-└── main.swift # Punto de entrada de la app
+└── main.swift              # Punto de entrada de la app
 
 
 ---
@@ -71,6 +71,7 @@ La API corre por defecto en http://localhost:8080.
 ---
 
 ## 🌍 Variables de entorno necesarias
+
 Antes de ejecutar, asegurate de configurar:
 
 ```bash
@@ -108,17 +109,21 @@ Content-Type: application/json
 ---
 
 ## ☁️ Deploy
+
 La API está deployada en Render.com y disponible públicamente:
-👉 https://backend-recipes-bootcamps-tribe.onrender.com
+
+👉 https://recetasapi.onrender.com/
 
 ---
 
 ## 🌟 Créditos
-Proyecto creado por Matías Spinelli
-(@matias-spinelli)
-Backend desarrollado en Swift + Vapor, como parte de un curso con fines de práctica y aprendizaje.
+
+Proyecto creado por **Matías Spinelli**
+([@matias-spinelli](https://github.com/matias-spinelli))\
+Backend desarrollado en **Swift** + **Vapor**, como parte de un curso con fines de práctica y aprendizaje.
 
 ---
 
 ## 📜 Licencia
+
 MIT License © 2025
