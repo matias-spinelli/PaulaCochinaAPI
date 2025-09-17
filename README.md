@@ -66,28 +66,32 @@ swift build
 # Ejecutar en modo desarrollo
 swift run
 La API corre por defecto en http://localhost:8080.
+```
 
 ---
 
 ## 🌍 Variables de entorno necesarias
 Antes de ejecutar, asegurate de configurar:
 
-
+```bash
 MONGO_URL=mongodb+srv://<user>:<password>@cluster-url/dbname
 JWT_SECRET=super-secret-key
 PORT=8080   # (opcional, Render asigna uno dinámicamente)
-
+```
 ---
 
 ## 🔥 Ejemplo de endpoints
 Obtener recetas
 
-
+```bash
 GET /api/recipes/get?auth=<JWT_TOKEN>
+```
+
 Crear receta
 
-
+```bash
 POST /api/recipes/add?auth=<JWT_TOKEN>
+
 Content-Type: application/json
 
 {
@@ -99,6 +103,7 @@ Content-Type: application/json
     { "name": "Papas", "amount": 3 }
   ]
 }
+```
 
 ---
 
