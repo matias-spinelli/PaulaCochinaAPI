@@ -1,0 +1,114 @@
+# 📖 API de Recetas – CRUD Endpoints
+
+```bash
+## 🔹 1. Crear receta 
+**POST** `/api/recipes`
+
+Request Body:
+{
+  "name": "Milanesas con puré",
+  "description": "Un clásico argentino",
+  "imagePath": "https://ejemplo.com/milas.jpg",
+  "ingredients": [
+    { "name": "Carne", "amount": 500 },
+    { "name": "Papas", "amount": 1000 }
+  ]
+}
+
+Response 201 Created:
+{
+  "_id": "6500abc123def45678901234",
+  "name": "Milanesas con puré",
+  "description": "Un clásico argentino",
+  "imagePath": "https://ejemplo.com/milas.jpg",
+  "ingredients": [
+    { "name": "Carne", "amount": 500 },
+    { "name": "Papas", "amount": 1000 }
+  ]
+}
+```
+
+```bash
+## 🔹 2. Listar recetas 
+**GET** `/api/recipes`
+
+Response 200 OK:
+[
+  {
+    "_id": "6500abc123def45678901234",
+    "name": "Milanesas con puré",
+    "description": "Un clásico argentino",
+    "imagePath": "https://ejemplo.com/milas.jpg",
+    "ingredients": [
+      { "name": "Carne", "amount": 500 },
+      { "name": "Papas", "amount": 1000 }
+    ]
+  }
+]
+```
+
+```bash
+## 🔹 3. Obtener receta por ID 
+**GET** `/api/recipes/:id`
+
+Response 200 OK:
+{
+  "_id": "6500abc123def45678901234",
+  "name": "Milanesas con puré",
+  "description": "Un clásico argentino",
+  "imagePath": "https://ejemplo.com/milas.jpg",
+  "ingredients": [
+    { "name": "Carne", "amount": 500 },
+    { "name": "Papas", "amount": 1000 }
+  ]
+}
+```
+
+```bash
+## 🔹 4. Actualizar receta 
+**PUT** `/api/recipes/:id`
+
+Request Body:
+{
+  "name": "Milanesas napolitanas con puré",
+  "description": "Con queso y jamón",
+  "imagePath": "https://ejemplo.com/milas-napo.jpg",
+  "ingredients": [
+    { "name": "Carne", "amount": 500 },
+    { "name": "Papas", "amount": 1000 },
+    { "name": "Queso", "amount": 200 }
+  ]
+}
+
+Response 200 OK:
+{
+  "_id": "6500abc123def45678901234",
+  "name": "Milanesas napolitanas con puré",
+  "description": "Con queso y jamón",
+  "imagePath": "https://ejemplo.com/milas-napo.jpg",
+  "ingredients": [
+    { "name": "Carne", "amount": 500 },
+    { "name": "Papas", "amount": 1000 },
+    { "name": "Queso", "amount": 200 }
+  ]
+}
+```
+
+```bash
+## 🔹 5. Eliminar receta 
+**DELETE** `/api/recipes/:id`
+
+Response 204 No Content
+(no body)
+
+Response 400 Bad Request
+{ "error": "No se pudo eliminar la receta" }
+```
+
+```bash
+## ⚠️ Errores comunes
+401 Unauthorized -> { "error": "Token inválido o expirado" }
+404 Not Found -> { "error": "Receta no encontrada" }
+400 Bad Request -> { "error": "El id proporcionado no es válido" }
+500 Internal Server Error -> { "error": "Error obteniendo recetas" }
+```
