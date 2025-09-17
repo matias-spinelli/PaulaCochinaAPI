@@ -1,3 +1,10 @@
+//
+//  configure.swift
+//  RecetasAPI
+//
+//  Created by Matías Spinelli on 11/09/2025.
+//
+
 import Vapor
 import MongoKitten
 import JWT
@@ -26,6 +33,17 @@ public func configure(_ app: Application) throws {
 
     // 🔑 Configurar JWT signer
     app.jwt.signers.use(.hs256(key: Environment.get("JWT_SECRET") ?? "super-secret-key"))
+
+    // 🌍 Middleware de CORS (permitimos todo porque es TP)
+    let corsConfiguration = CORSMiddleware.Configuration(
+        allowedOrigin: .all,
+        allowedMethods: [.GET, .POST, .PUT, .DELETE, .OPTIONS],
+        allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith, .userAgent, .accessControlAllowOrigin]
+    )
+    app.middleware.use(CORSMiddleware(configuration: corsConfiguration))
+
+    // 📝 Middleware de logging custom
+    app.middleware.use(RequestLoggerMiddleware())
 
     // Rutas
     try routes(app)
