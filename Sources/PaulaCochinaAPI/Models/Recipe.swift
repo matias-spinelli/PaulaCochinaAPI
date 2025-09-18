@@ -1,6 +1,6 @@
 //
 //  Recipe.swift
-//  RecetasAPI
+//  PaulaCochinaAPI
 //
 //  Created by Matías Spinelli on 29/08/2025.
 //

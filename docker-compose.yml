@@ -1,9 +1,9 @@
 version: "3.8"
 
 services:
-  recetasapi:
+  paulacochinaapi:
     build: .
-    container_name: recetasapi
+    container_name: paulacochinaapi
     ports:
       - "8080:8080"
     env_file:

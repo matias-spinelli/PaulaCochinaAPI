@@ -1,5 +1,5 @@
 import XCTest
-@testable import RecetasAPI
+@testable import PaulaCochinaAPI
 
 final class RecetasAPITests: XCTestCase {
     func testExample() throws {

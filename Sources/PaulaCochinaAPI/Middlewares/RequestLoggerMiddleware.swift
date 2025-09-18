@@ -1,6 +1,6 @@
 //
 //  RequestLoggerMiddleware.swift
-//  RecetasAPI
+//  PaulaCochinaAPI
 //
 //  Created by Matías Spinelli on 17/09/2025.
 //

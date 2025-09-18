@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "RecetasAPI",
+    name: "PaulaCochinaAPI",
     platforms: [
         .macOS(.v13)
     ],
@@ -13,7 +13,7 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "RecetasAPI",
+            name: "PaulaCochinaAPI",
             dependencies: [
                 .product(name: "Vapor", package: "vapor"),
                 .product(name: "MongoKitten", package: "MongoKitten"),
@@ -23,7 +23,7 @@ let package = Package(
         ),
         .testTarget(
             name: "RecetasAPITests",
-            dependencies: ["RecetasAPI"]
+            dependencies: ["PaulaCochinaAPI"]
         )
     ]
 )

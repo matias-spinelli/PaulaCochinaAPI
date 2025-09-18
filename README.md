@@ -39,7 +39,7 @@ El proyecto forma parte del trabajo práctico final de un curso, complementando 
 ## 📂 Estructura del proyecto
 
 Sources/
-├── RecetasAPI/
+├── PaulaCochinaAPI/
 │ ├── Controllers/          # Controladores de rutas (RecipesController, AuthController, etc.)
 │ ├── Middleware/           # Middlewares personalizados (LoggingMiddleware, etc.)
 │ ├── Models/               # Modelos de datos (Recipe, User)
@@ -112,7 +112,7 @@ Content-Type: application/json
 
 La API está deployada en Render.com y disponible públicamente:
 
-👉 https://recetasapi.onrender.com/
+👉 https://paulacochinaapi.onrender.com/
 
 ---
 

@@ -24,8 +24,8 @@ FROM swift:5.9 as runtime
 WORKDIR /app
 
 # Copiar el binario compilado
-COPY --from=build /app/.build/release/RecetasAPI /app/RecetasAPI
-RUN chmod +x /app/RecetasAPI
+COPY --from=build /app/.build/release/PaulaCochinaAPI /app/PaulaCochinaAPI
+RUN chmod +x /app/PaulaCochinaAPI
 
 # Instalar sqlite3 si lo necesitás en runtime
 RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev && rm -rf /var/lib/apt/lists/*
@@ -34,4 +34,4 @@ RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev && rm -rf /var/l
 EXPOSE 8080
 
 # Comando de arranque
-CMD ["/app/RecetasAPI"]
+CMD ["/app/PaulaCochinaAPI"]

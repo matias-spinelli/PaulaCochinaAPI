@@ -1,6 +1,6 @@
 //
 //  Ingredient.swift
-//  RecetasAPI
+//  PaulaCochinaAPI
 //
 //  Created by Matías Spinelli on 13/09/2025.
 //

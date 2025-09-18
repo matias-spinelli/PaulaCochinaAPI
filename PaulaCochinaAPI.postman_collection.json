@@ -1,8 +1,8 @@
 {
   "info": {
-    "name": "RecetasAPI",
+    "name": "PaulaCochinaAPI",
     "_postman_id": "6cbe9c8c-3e2d-4a6b-b7aa-123456789abc",
-    "description": "Colección para probar Auth y Recipes en RecetasAPI",
+    "description": "Colección para probar Auth y Recipes en PaulaCochinaAPI",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
