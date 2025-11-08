@@ -25,19 +25,44 @@ struct AuthMiddleware: AsyncMiddleware {
         }
 
         do {
+            // Verificar el token JWT
             let payload = try request.jwt.verify(token, as: AuthPayload.self)
             request.auth.login(UserIdentity(uid: payload.uid, email: payload.email))
             request.logger.info("✅ JWT verificado para usuario: \(payload.email)")
+
             return try await next.respond(to: request)
-        } catch let error as JWTError {
-            request.logger.warning("❌ JWT error: \(error)")
-            return makeErrorResponse(.unauthorized, "Token inválido o expirado (\(error.localizedDescription))")
-        } catch let error as DecodingError {
-            request.logger.warning("❌ Decoding error: \(error)")
-            return makeErrorResponse(.badRequest, "Error parseando payload del token (\(error.localizedDescription))")
+
+        } catch let jwtError as JWTError {
+            // Errores propios del JWT (firma, expiración, formato, etc.)
+            request.logger.warning("❌ JWT Error: \(jwtError)")
+            return makeErrorResponse(.unauthorized, "Token inválido o expirado (\(jwtError.localizedDescription))")
+
+        } catch let decodingError as DecodingError {
+            // Errores de decodificación (JSON mal formado, token corrupto, etc.)
+            let contextDescription = describeDecodingError(decodingError)
+            request.logger.warning("⚠️ Decoding error: \(contextDescription)")
+            return makeErrorResponse(.badRequest, "Error interpretando datos del request: \(contextDescription)")
+
         } catch {
-            request.logger.warning("❌ Auth unexpected error: \(error)")
-            return makeErrorResponse(.internalServerError, "Error inesperado en autenticación")
+            // Cualquier otro error inesperado
+            request.logger.warning("💥 Auth unexpected error: \(error)")
+            return makeErrorResponse(.internalServerError, "Error inesperado en autenticación (\(error.localizedDescription))")
+        }
+    }
+
+    /// Construye un texto descriptivo del DecodingError (más útil para debugging)
+    private func describeDecodingError(_ error: DecodingError) -> String {
+        switch error {
+        case .typeMismatch(let type, let context):
+            return "Tipo inesperado '\(type)' en \(context.codingPath.map(\.stringValue).joined(separator: ".")) — \(context.debugDescription)"
+        case .valueNotFound(let type, let context):
+            return "Valor faltante para '\(type)' en \(context.codingPath.map(\.stringValue).joined(separator: ".")) — \(context.debugDescription)"
+        case .keyNotFound(let key, let context):
+            return "Falta la clave '\(key.stringValue)' en el JSON — \(context.debugDescription)"
+        case .dataCorrupted(let context):
+            return "Datos corruptos o formato inválido — \(context.debugDescription)"
+        @unknown default:
+            return "Error desconocido decodificando payload"
         }
     }
 
