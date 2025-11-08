@@ -33,9 +33,9 @@ func routes(_ app: Application) throws {
 
     // Favoritos
     users.group(":uid", "favorites") { group in
-        group.get(use: favoritesController.index)
-        group.post(use: favoritesController.toggle)
-        group.delete(":recipeId", use: favoritesController.delete)
+        group.get(use: favoritesController.index)     // GET /api/users/:uid/favorites
+        group.post(use: favoritesController.toggle)   // POST /api/users/:uid/favorites  (body: { recipe_id })
+        group.delete(":recipeId", use: favoritesController.delete) // DELETE /api/users/:uid/favorites/:recipeId
     }
 
     // Lista de compras

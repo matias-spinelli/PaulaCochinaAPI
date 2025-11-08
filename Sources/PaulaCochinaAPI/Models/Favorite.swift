@@ -8,10 +8,12 @@
 import Vapor
 import MongoKitten
 
-struct Favorite: Codable {
+struct Favorite: Codable, Content {
     var _id: ObjectId?
     var user_id: String
     var recipe_id: String
-    var recipe_name: String
-    var imagePath: String
+}
+
+struct FavoriteRequest: Content {
+    let recipe_id: String
 }
