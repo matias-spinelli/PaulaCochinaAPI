@@ -37,7 +37,7 @@ struct UserController {
         let newUser = User(
             _id: ObjectId(),
             email: signupRequest.email,
-            password: signupRequest.password // 🔥 plano, sin hash
+            password: signupRequest.password
         )
 
         try await collection.insertEncoded(newUser)
