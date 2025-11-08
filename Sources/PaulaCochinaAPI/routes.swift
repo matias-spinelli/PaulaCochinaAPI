@@ -43,8 +43,8 @@ func routes(_ app: Application) throws {
         user.group("shopping-list") { list in
             list.get(use: shoppingListController.index)
             list.post(use: shoppingListController.create)
-            list.put(":name", use: shoppingListController.update)
-            list.delete(":name", use: shoppingListController.delete)
+            list.put(":ingredientId", use: shoppingListController.update)
+            list.delete(":ingredientId", use: shoppingListController.delete)
             list.delete(use: shoppingListController.clear)
         }
     }

@@ -28,7 +28,6 @@ struct ShoppingListController {
     }
 
     // MARK: - Helpers
-
     private func makeJSONResponse(_ status: HTTPResponseStatus, _ data: Encodable) throws -> Response {
         let encoded = try JSONEncoder().encode(data)
         return Response(status: status, body: .init(data: encoded))
@@ -70,17 +69,10 @@ struct ShoppingListController {
                 if let existingDoc = try await getCollection().findOne("user_id" == uid && "name" == ingredient.name) {
                     var existing = try BSONDecoder().decode(ShoppingItem.self, from: existingDoc)
                     existing.amount += ingredient.amount
-                    if let existingOid = existing._id {
-                        try await getCollection().updateOne(
-                            where: "_id" == existingOid,
-                            to: ["$set": ["amount": existing.amount]]
-                        )
-                    } else {
-                        try await getCollection().updateOne(
-                            where: "user_id" == uid && "name" == ingredient.name,
-                            to: ["$set": ["amount": existing.amount]]
-                        )
-                    }
+                    try await getCollection().updateOne(
+                        where: "_id" == existing._id!,
+                        to: ["$set": ["amount": existing.amount]]
+                    )
                 } else {
                     let newItem = ShoppingItem(
                         _id: ObjectId(),
@@ -108,17 +100,10 @@ struct ShoppingListController {
         if let existingDoc = try await getCollection().findOne("user_id" == uid && "name" == name) {
             var existing = try BSONDecoder().decode(ShoppingItem.self, from: existingDoc)
             existing.amount += amount
-            if let oid = existing._id {
-                try await getCollection().updateOne(
-                    where: "_id" == oid,
-                    to: ["$set": ["amount": existing.amount]]
-                )
-            } else {
-                try await getCollection().updateOne(
-                    where: "user_id" == uid && "name" == name,
-                    to: ["$set": ["amount": existing.amount]]
-                )
-            }
+            try await getCollection().updateOne(
+                where: "_id" == existing._id!,
+                to: ["$set": ["amount": existing.amount]]
+            )
             return try makeJSONResponse(.ok, [
                 "message": AnyEncodable("Ingrediente existente actualizado (merge)"),
                 "name": AnyEncodable(existing.name),
@@ -139,53 +124,42 @@ struct ShoppingListController {
         }
     }
 
-    // MARK: - PUT /api/users/:uid/shopping-list/:name
+    // MARK: - PUT /api/users/:uid/shopping-list/:ingredientId
     func update(req: Request) async throws -> Response {
         guard let uid = req.parameters.get("uid"),
-              let name = req.parameters.get("name") else {
-            return try makeJSONResponse(.badRequest, makeMessage("Falta UID o nombre"))
+              let ingredientId = req.parameters.get("ingredientId"),
+              let oid = ObjectId(ingredientId) else {
+            return try makeJSONResponse(.badRequest, makeMessage("Falta UID o ingredientId"))
         }
 
         struct UpdateRequest: Content { let amount: Double }
         let body = try req.content.decode(UpdateRequest.self)
 
-        guard let existingDoc = try await getCollection().findOne("user_id" == uid && "name" == name) else {
+        guard let existingDoc = try await getCollection().findOne("_id" == oid && "user_id" == uid) else {
             return try makeJSONResponse(.notFound, makeMessage("Ingrediente no encontrado"))
         }
 
-        let existing = try BSONDecoder().decode(ShoppingItem.self, from: existingDoc)
-        if let oid = existing._id {
-            try await getCollection().updateOne(
-                where: "_id" == oid,
-                to: ["$set": ["amount": body.amount]]
-            )
-        } else {
-            try await getCollection().updateOne(
-                where: "user_id" == uid && "name" == name,
-                to: ["$set": ["amount": body.amount]]
-            )
-        }
+        try await getCollection().updateOne(
+            where: "_id" == oid,
+            to: ["$set": ["amount": body.amount]]
+        )
 
         return try makeJSONResponse(.ok, makeMessage("Cantidad actualizada"))
     }
 
-    // MARK: - DELETE /api/users/:uid/shopping-list/:name
+    // MARK: - DELETE /api/users/:uid/shopping-list/:ingredientId
     func delete(req: Request) async throws -> Response {
         guard let uid = req.parameters.get("uid"),
-              let name = req.parameters.get("name") else {
-            return try makeJSONResponse(.badRequest, makeMessage("Falta UID o nombre"))
+              let ingredientId = req.parameters.get("ingredientId"),
+              let oid = ObjectId(ingredientId) else {
+            return try makeJSONResponse(.badRequest, makeMessage("Falta UID o ingredientId"))
         }
 
-        guard let existingDoc = try await getCollection().findOne("user_id" == uid && "name" == name) else {
+        guard let existingDoc = try await getCollection().findOne("_id" == oid && "user_id" == uid) else {
             return try makeJSONResponse(.notFound, makeMessage("Ingrediente no encontrado"))
         }
 
-        let existing = try BSONDecoder().decode(ShoppingItem.self, from: existingDoc)
-        if let oid = existing._id {
-            _ = try await getCollection().deleteOne(where: "_id" == oid)
-        } else {
-            _ = try await getCollection().deleteOne(where: "user_id" == uid && "name" == name)
-        }
+        _ = try await getCollection().deleteOne(where: "_id" == oid)
 
         return try makeJSONResponse(.ok, makeMessage("Ingrediente eliminado"))
     }
