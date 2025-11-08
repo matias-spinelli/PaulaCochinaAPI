@@ -28,10 +28,9 @@ func routes(_ app: Application) throws {
 
     // 🔹 Users scoped routes (requieren token)
     let users = app.grouped("api", "users").grouped(AuthMiddleware())
-    let favoritesController = FavoritesController()
-    let shoppingController = ShoppingListController()
 
     // Favoritos
+    let favoritesController = FavoritesController()
     users.group(":uid", "favorites") { group in
         group.get(use: favoritesController.index)     // GET /api/users/:uid/favorites
         group.post(use: favoritesController.toggle)   // POST /api/users/:uid/favorites  (body: { recipe_id })
@@ -39,10 +38,15 @@ func routes(_ app: Application) throws {
     }
 
     // Lista de compras
-    users.group(":uid", "shopping-list") { group in
-        group.get(use: shoppingController.index)
-        group.post(use: shoppingController.create)
-        group.delete(use: shoppingController.clear)      // borra todos
-        group.delete(":name", use: shoppingController.delete) // borra uno
+    let shoppingListController = ShoppingListController()
+    users.group(":uid") { user in
+        user.group("shopping-list") { list in
+            list.get(use: shoppingListController.index)
+            list.post(use: shoppingListController.create)
+            list.put(":name", use: shoppingListController.update)
+            list.delete(":name", use: shoppingListController.delete)
+            list.delete(use: shoppingListController.clear)
+        }
     }
+
 }
