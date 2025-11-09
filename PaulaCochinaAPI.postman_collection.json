@@ -1,145 +1,487 @@
 {
-  "info": {
-    "name": "PaulaCochinaAPI",
-    "_postman_id": "6cbe9c8c-3e2d-4a6b-b7aa-123456789abc",
-    "description": "Colección para probar Auth y Recipes en PaulaCochinaAPI",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Signup",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "url": {
-          "raw": "http://localhost:8080/api/auth/signup",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "auth", "signup"]
+    "info": {
+        "_postman_id": "83a3ba41-5722-4d36-b023-3445bea77fec",
+        "name": "RecetasAPI",
+        "description": "Colección para probar Auth, Recipes, Favoritos y ShoppingList en RecetasAPI",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "44438285"
+    },
+    "item": [
+        {
+            "name": "Signup",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email\": \"matias@matias.com\",\n  \"password\": \"123456\"\n}"
+                },
+                "url": {
+                    "raw": "https://recetasapi.onrender.com/api/auth/signup",
+                    "protocol": "https",
+                    "host": [
+                        "recetasapi",
+                        "onrender",
+                        "com"
+                    ],
+                    "path": [
+                        "api",
+                        "auth",
+                        "signup"
+                    ]
+                }
+            },
+            "response": []
         },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"matias@matias.com\",\n  \"password\": \"123456\"\n}"
-        }
-      }
-    },
-    {
-      "name": "Login",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "url": {
-          "raw": "http://localhost:8080/api/auth/login",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "auth", "login"]
+        {
+            "name": "Login",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email\": \"matias@matias.com\",\n  \"password\": \"123456\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:8080/api/auth/login",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "auth",
+                        "login"
+                    ]
+                }
+            },
+            "response": []
         },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"matias@matias.com\",\n  \"password\": \"123456\"\n}"
-        }
-      }
-    },
-    {
-      "name": "Get Recipes (query ?auth)",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:8080/api/recipes?auth={{idToken}}",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "recipes"],
-          "query": [
-            { "key": "auth", "value": "{{idToken}}" }
-          ]
-        }
-      }
-    },
-    {
-      "name": "Get Recipes (Bearer header)",
-      "request": {
-        "method": "GET",
-        "header": [
-          { "key": "Authorization", "value": "Bearer {{idToken}}" }
-        ],
-        "url": {
-          "raw": "http://localhost:8080/api/recipes",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "recipes"]
-        }
-      }
-    },
-    {
-      "name": "Add Recipe",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "Authorization", "value": "Bearer {{idToken}}" }
-        ],
-        "url": {
-          "raw": "http://localhost:8080/api/recipes",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "recipes"]
+        {
+            "name": "Get Recipes",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{idToken}}"
+                    }
+                ],
+                "url": {
+                    "raw": "http://localhost:8080/api/recipes",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "recipes"
+                    ]
+                }
+            },
+            "response": []
         },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"Pizza de muzzarella\",\n  \"imagePath\": \"https://example.com/pizza.jpg\",\n  \"description\": \"Clásica pizza con muzzarella y aceitunas\",\n  \"ingredients\": [\n    { \"name\": \"Harina\", \"amount\": 500, \"unit\": \"g\" },\n    { \"name\": \"Queso muzzarella\", \"amount\": 300, \"unit\": \"g\" },\n    { \"name\": \"Aceitunas\", \"amount\": 50, \"unit\": \"g\" }\n  ]\n}"
-        }
-      }
-    },
-    {
-      "name": "Update Recipe (PUT)",
-      "request": {
-        "method": "PUT",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "Authorization", "value": "Bearer {{idToken}}" }
-        ],
-        "url": {
-          "raw": "http://localhost:8080/api/recipes/{{recipeId}}",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "recipes", "{{recipeId}}"]
+        {
+            "name": "Add Recipe",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{idToken}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"name\": \"Pizza de muzzarella\",\n  \"imagePath\": \"https://example.com/pizza.jpg\",\n  \"description\": \"Clásica pizza con muzzarella y aceitunas\",\n  \"ingredients\": [\n    { \"name\": \"Harina\", \"amount\": 500, \"unit\": \"g\" },\n    { \"name\": \"Queso muzzarella\", \"amount\": 300, \"unit\": \"g\" },\n    { \"name\": \"Aceitunas\", \"amount\": 50, \"unit\": \"g\" }\n  ]\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:8080/api/recipes",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "recipes"
+                    ]
+                }
+            },
+            "response": []
         },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"Pizza 4 quesos\",\n  \"imagePath\": \"https://example.com/pizza4.jpg\",\n  \"description\": \"Pizza con muzzarella, gorgonzola, parmesano y provolone\",\n  \"ingredients\": [\n    { \"name\": \"Harina\", \"amount\": 500, \"unit\": \"g\" },\n    { \"name\": \"Queso muzzarella\", \"amount\": 200, \"unit\": \"g\" },\n    { \"name\": \"Queso parmesano\", \"amount\": 100, \"unit\": \"g\" }\n  ]\n}"
+        {
+            "name": "Update Recipe",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{idToken}}"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"name\": \"Pizza 4 quesos\",\n  \"imagePath\": \"https://example.com/pizza4.jpg\",\n  \"description\": \"Pizza con muzzarella, gorgonzola, parmesano y provolone\",\n  \"ingredients\": [\n    { \"name\": \"Harina\", \"amount\": 500, \"unit\": \"g\" },\n    { \"name\": \"Queso muzzarella\", \"amount\": 200, \"unit\": \"g\" },\n    { \"name\": \"Queso parmesano\", \"amount\": 100, \"unit\": \"g\" }\n  ]\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:8080/api/recipes/{{recipeId}}",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "recipes",
+                        "{{recipeId}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Delete Recipe",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{idToken}}"
+                    }
+                ],
+                "url": {
+                    "raw": "http://localhost:8080/api/recipes/{{recipeId}}",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "recipes",
+                        "{{recipeId}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Favorites",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{idToken}}"
+                    }
+                ],
+                "url": {
+                    "raw": "http://localhost:8080/api/favorites",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "favorites"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Favorite Recipe",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{idToken}}"
+                    },
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"recipeId\": \"68c9e01e3cf9c32c7b86a0d9\"\n}\n",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "https://recetasapi.onrender.com/api/users/68c459b6633008e449bbeb9f/favorites",
+                    "protocol": "https",
+                    "host": [
+                        "recetasapi",
+                        "onrender",
+                        "com"
+                    ],
+                    "path": [
+                        "api",
+                        "users",
+                        "68c459b6633008e449bbeb9f",
+                        "favorites"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Unfavorite Recipe",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{idToken}}"
+                    }
+                ],
+                "url": {
+                    "raw": "http://localhost:8080/api/favorites/{{recipeId}}",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "favorites",
+                        "{{recipeId}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Shopping List",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{idToken}}"
+                    }
+                ],
+                "url": {
+                    "raw": "http://localhost:8080/api/shopping-list",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "shopping-list"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Add Ingredients From Recipe to Shopping List",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{idToken}}"
+                    },
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"name\": \"Queso parmesano\",\n  \"amount\": 200,\n  \"unit\": \"g\"\n}"
+                },
+                "url": {
+                    "raw": "http://localhost:8080/api/shopping-list",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "shopping-list"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Add Ingredient to Shopping List",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{idToken}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \n    \"name\": \"tomate\", \n    \"amount\": 2\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "https://recetasapi.onrender.com/api/users/68c459b6633008e449bbeb9f/shopping-list",
+                    "protocol": "https",
+                    "host": [
+                        "recetasapi",
+                        "onrender",
+                        "com"
+                    ],
+                    "path": [
+                        "api",
+                        "users",
+                        "68c459b6633008e449bbeb9f",
+                        "shopping-list"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Edit Ingredient from Shopping List",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{idToken}}",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{ \n    \"name\": \"tomate\", \n    \"amount\": 5\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "https://recetasapi.onrender.com/api/users/68c459b6633008e449bbeb9f/shopping-list",
+                    "protocol": "https",
+                    "host": [
+                        "recetasapi",
+                        "onrender",
+                        "com"
+                    ],
+                    "path": [
+                        "api",
+                        "users",
+                        "68c459b6633008e449bbeb9f",
+                        "shopping-list"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Remove Ingredient from Shopping List",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{idToken}}"
+                    }
+                ],
+                "url": {
+                    "raw": "http://localhost:8080/api/shopping-list/{{ingredientId}}",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "shopping-list",
+                        "{{ingredientId}}"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Empty Shopping List",
+            "request": {
+                "method": "DELETE",
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{idToken}}"
+                    }
+                ],
+                "url": {
+                    "raw": "http://localhost:8080/api/shopping-list/{{ingredientId}}",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "shopping-list",
+                        "{{ingredientId}}"
+                    ]
+                }
+            },
+            "response": []
         }
-      }
-    },
-    {
-      "name": "Delete Recipe",
-      "request": {
-        "method": "DELETE",
-        "header": [
-          { "key": "Authorization", "value": "Bearer {{idToken}}" }
-        ],
-        "url": {
-          "raw": "http://localhost:8080/api/recipes/{{recipeId}}",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "8080",
-          "path": ["api", "recipes", "{{recipeId}}"]
+    ],
+    "variable": [
+        {
+            "key": "idToken",
+            "value": ""
+        },
+        {
+            "key": "recipeId",
+            "value": ""
+        },
+        {
+            "key": "ingredientId",
+            "value": ""
+        },
+        {
+            "key": "userId",
+            "value": "",
+            "type": "default"
         }
-      }
-    }
-  ],
-  "variable": [
-    { "key": "idToken", "value": "" },
-    { "key": "recipeId", "value": "" }
-  ]
+    ]
 }

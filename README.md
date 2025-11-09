@@ -6,9 +6,13 @@
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
-**PaulaCochina API** es el backend desarrollado en **Swift** utilizando el framework **Vapor**.
-Expone un **CRUD de recetas** conectado a **MongoDB**, con soporte de autenticación basada en **JWT**.
-El proyecto forma parte del trabajo práctico final de un curso, complementando al frontend hecho en Angular.
+**PaulaCochina API** es el backend desarrollado en **Swift** utilizando el framework **Vapor**.  
+Expone un sistema completo de **usuarios, recetas, favoritos y lista de compras**,  
+con persistencia en **MongoDB** y autenticación mediante **JWT**.  
+
+El proyecto complementa al frontend hecho en **Angular**,  
+como parte del trabajo práctico final del curso.
+
 
 ---
 
@@ -25,14 +29,26 @@ El proyecto forma parte del trabajo práctico final de un curso, complementando 
 
 ## ✨ Funcionalidades principales
 
-- 📌 **Autenticación** con JWT (login y protección de endpoints).
-- 📖 **CRUD de Recetas**:
-  - Crear (`POST /api/recipes/add`)
-  - Leer (`GET /api/recipes/get`)
-  - Editar (`PUT /api/recipes/edit/:id`)
-  - Eliminar (`DELETE /api/recipes/delete/:id`)
-- 🛡️ **Middleware de seguridad**: validación de tokens, cierre de sesión si expira.
-- 📜 **Middleware de logging**: registra método, ruta, body (con password/token ocultos) y headers.
+- 🔐 **Autenticación completa**
+  - Registro (`/api/auth/signup`)
+  - Login (`/api/auth/login`)
+  - Tokens JWT con expiración y validación en middleware
+- 📖 **CRUD de Recetas**
+  - Crear, obtener, actualizar y eliminar recetas
+  - Validaciones: título ≥3 caracteres, descripción ≥10, ingredientes obligatorios
+- 💖 **Favoritos**
+  - Marcar y desmarcar recetas como favoritas por usuario
+  - Consultar todas las recetas favoritas
+- 🛒 **Lista de Compras**
+  - Agregar ingredientes manualmente o desde una receta
+  - Editar, eliminar o vaciar lista completa
+- 🧩 **Middlewares personalizados**
+  - Seguridad JWT
+  - Logging de requests (con ocultamiento de contraseñas/tokens)
+  - Manejo centralizado de errores
+- 🧠 **Arquitectura limpia**
+  - Separación clara entre controladores, modelos y middlewares
+  - Respuestas uniformes con mensajes y status codes consistentes
 
 ---
 
@@ -81,30 +97,44 @@ PORT=8080   # (opcional, Render asigna uno dinámicamente)
 ```
 ---
 
-## 🔥 Ejemplo de endpoints
-Obtener recetas
+## 📡 Endpoints disponibles
 
-```bash
-GET /api/recipes/get?auth=<JWT_TOKEN>
-```
+### 🔐 Autenticación (`/api/auth`)
+| Método | Endpoint | Descripción |
+|:-------|:----------|:-------------|
+| ![POST](https://img.shields.io/badge/POST-2196F3?style=for-the-badge&logo=) | `/signup` | Crear un nuevo usuario |
+| ![POST](https://img.shields.io/badge/POST-2196F3?style=for-the-badge&logo=) | `/login` | Iniciar sesión y obtener token JWT |
 
-Crear receta
+---
 
-```bash
-POST /api/recipes/add?auth=<JWT_TOKEN>
+### 📖 Recetas (`/api/recipes`)
+| Método | Endpoint | Descripción |
+|:-------|:----------|:-------------|
+| ![GET](https://img.shields.io/badge/GET-4CAF50?style=for-the-badge&logo=) | `/` | Obtener todas las recetas del usuario |
+| ![POST](https://img.shields.io/badge/POST-2196F3?style=for-the-badge&logo=) | `/` | Crear una nueva receta |
+| ![PUT](https://img.shields.io/badge/PUT-FF9800?style=for-the-badge&logo=) | `/:id` | Actualizar una receta existente |
+| ![DELETE](https://img.shields.io/badge/DELETE-F44336?style=for-the-badge&logo=) | `/:id` | Eliminar una receta |
 
-Content-Type: application/json
+---
 
-{
-  "name": "Milanesa con papas fritas",
-  "description": "Clásico argentino 💙💛💙",
-  "imagePath": "https://mis-imagenes.com/milanesa.jpg",
-  "ingredients": [
-    { "name": "Carne", "amount": 1 },
-    { "name": "Papas", "amount": 3 }
-  ]
-}
-```
+### 💖 Favoritos (`/api/favorites`)
+| Método | Endpoint | Descripción |
+|:-------|:----------|:-------------|
+| ![GET](https://img.shields.io/badge/GET-4CAF50?style=for-the-badge&logo=) | `/` | Obtener recetas favoritas del usuario |
+| ![POST](https://img.shields.io/badge/POST-2196F3?style=for-the-badge&logo=) | `/users/:userId/favorites` | Agregar receta a favoritos |
+| **DELETE** | `/favorites/:recipeId` | Quitar receta de favoritos |
+
+---
+
+### 🛒 Lista de Compras (`/api/shopping-list`)
+| Método | Endpoint | Descripción |
+|:-------|:----------|:-------------|
+| ![GET](https://img.shields.io/badge/GET-4CAF50?style=for-the-badge&logo=) | `/` | Obtener lista completa |
+| ![POST](https://img.shields.io/badge/POST-2196F3?style=for-the-badge&logo=)| `/` | Agregar ingredientes manualmente o desde receta |
+| ![PUT](https://img.shields.io/badge/PUT-FF9800?style=for-the-badge&logo=)| `/users/:userId/shopping-list` | Editar ingrediente existente |
+| ![DELETE](https://img.shields.io/badge/DELETE-F44336?style=for-the-badge&logo=) | `/shopping-list/:ingredientId` | Eliminar un ingrediente |
+| ![DELETE](https://img.shields.io/badge/DELETE-F44336?style=for-the-badge&logo=) | `/shopping-list` | Vaciar lista completa |
+
 
 ---
 
